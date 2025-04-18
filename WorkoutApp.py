@@ -1,11 +1,34 @@
 import streamlit as st
+# from streamlit_folium import st_folium
+# import folium
 
-st.title("📱 Hello Button App")
+st.set_page_config(layout="wide")
+st.title("📱 Demo Workout App")
 
-if "message" not in st.session_state:
-    st.session_state.message = ""
+# Refresh every ~20 seconds
+st.experimental_rerun() if st.experimental_get_query_params().get("refresh") else None
+st.markdown('<meta http-equiv="refresh" content="20">', unsafe_allow_html=True)
 
-if st.button("Say Hello"):
-    st.session_state.message = "hello"
+# Inject JavaScript to get geolocation
+st.markdown("""
+    <script>
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const coords = `${pos.coords.latitude},${pos.coords.longitude}`;
+            window.location.href = `?coords=${coords}&refresh=true`;
+        },
+        (err) => alert("Location permission is required.")
+    );
+    </script>
+""", unsafe_allow_html=True)
 
-st.text_input("Message:", value=st.session_state.message)
+# Get coords from URL
+params = st.experimental_get_query_params()
+coords = params.get("coords", ["0,0"])[0].split(",")
+lat, lon = float(coords[0]), float(coords[1])
+
+# Display location on map
+st.write(f"📍 Your Current Location is: \n{lat = }\n{lon  = }")
+# m = folium.Map(location=[lat, lon], zoom_start=17)
+# folium.Marker([lat, lon], tooltip="You").add_to(m)
+# st_folium(m, width=700, height=500)
