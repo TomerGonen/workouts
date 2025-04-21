@@ -22,10 +22,12 @@ navigator.geolocation.getCurrentPosition(
 
 # === READ POSITION DATA FROM URL PARAMS ===
 params = st.query_params
-lat = float(params.get("lat", 0))
-lon = float(params.get("lon", 0))
-timestamp = int(params.get("t", 0))
+lat = float(params.get("lat", [0])[0])
+lon = float(params.get("lon", [0])[0])
+timestamp = int(params.get("t", [0])[0])
 
-# === DISPLAY STATS ===
+if lat == 0.0 and lon == 0.0:
+    st.info("📡 Waiting for location...")
+
 st.metric("📍 Latitude", lat)
 st.metric("📍 Longitude", lon)
