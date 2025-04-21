@@ -1,34 +1,31 @@
 import streamlit as st
-# from streamlit_folium import st_folium
-# import folium
 
-st.set_page_config(layout="wide")
-st.title("📱 Demo Workout App")
+# === TITLE ===
+st.title("🏃 GPS Speed Tracker")
 
-# Refresh every ~20 seconds
-st.experimental_rerun() if st.experimental_get_query_params().get("refresh") else None
-st.markdown('<meta http-equiv="refresh" content="20">', unsafe_allow_html=True)
-
-# Inject JavaScript to get geolocation
+# === JAVASCRIPT TO GET GPS POSITION FROM BROWSER ===
 st.markdown("""
-    <script>
-    navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            const coords = `${pos.coords.latitude},${pos.coords.longitude}`;
-            window.location.href = `?coords=${coords}&refresh=true`;
-        },
-        (err) => alert("Location permission is required.")
-    );
-    </script>
+<script>
+navigator.geolocation.getCurrentPosition(
+    function(pos) {
+        const lat = pos.coords.latitude.toFixed(6);
+        const lon = pos.coords.longitude.toFixed(6);
+        const now = new Date().getTime();
+        window.location.href = `?lat=${lat}&lon=${lon}&t=${now}`;
+    },
+    function(err) {
+        alert("Please allow GPS access.");
+    }
+);
+</script>
 """, unsafe_allow_html=True)
 
-# Get coords from URL
-params = st.experimental_get_query_params()
-coords = params.get("coords", ["0,0"])[0].split(",")
-lat, lon = float(coords[0]), float(coords[1])
+# === READ POSITION DATA FROM URL PARAMS ===
+params = st.query_params
+lat = float(params.get("lat", 0))
+lon = float(params.get("lon", 0))
+timestamp = int(params.get("t", 0))
 
-# Display location on map
-st.write(f"📍 Your Current Location is: \n{lat = }\n{lon  = }")
-# m = folium.Map(location=[lat, lon], zoom_start=17)
-# folium.Marker([lat, lon], tooltip="You").add_to(m)
-# st_folium(m, width=700, height=500)
+# === DISPLAY STATS ===
+st.metric("📍 Latitude", lat)
+st.metric("📍 Longitude", lon)
