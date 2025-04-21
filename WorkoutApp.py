@@ -28,7 +28,7 @@ coords = params.get("coords", ["0,0"])[0].split(",")
 lat, lon = float(coords[0]), float(coords[1])
 
 # Display location on map
-st.write(f"📍 Your Current Location is: \n{lat = }\n{lon  = }")
+# st.write(f"📍 Your Current Location is: \n{lat = }\n{lon  = }")
 # m = folium.Map(location=[lat, lon], zoom_start=17)
 # folium.Marker([lat, lon], tooltip="You").add_to(m)
 # st_folium(m, width=700, height=500)
