@@ -1,33 +1,37 @@
 import streamlit as st
 
 # === TITLE ===
-st.title("🏃 GPS Speed Tracker")
+st.title("📍 Get My Location")
 
-# === JAVASCRIPT TO GET GPS POSITION FROM BROWSER ===
+# Button to trigger location request
 st.markdown("""
+<button onclick="getLocation()">Get My Location</button>
+
 <script>
-navigator.geolocation.getCurrentPosition(
-    function(pos) {
-        const lat = pos.coords.latitude.toFixed(6);
-        const lon = pos.coords.longitude.toFixed(6);
-        const now = new Date().getTime();
-        window.location.href = `?lat=${lat}&lon=${lon}&t=${now}`;
-    },
-    function(err) {
-        alert("Please allow GPS access.");
-    }
-);
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(
+        function(pos) {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            window.location.href = `?lat=${lat}&lon=${lon}`;
+        },
+        function(err) {
+            alert("GPS access denied or unavailable.");
+        }
+    );
+}
 </script>
 """, unsafe_allow_html=True)
 
-# === READ POSITION DATA FROM URL PARAMS ===
+# Read from query params
 params = st.query_params
-lat = float(params.get("lat", [0])[0])
-lon = float(params.get("lon", [0])[0])
-timestamp = int(params.get("t", [0])[0])
+lat = params.get("lat", [None])[0]
+lon = params.get("lon", [None])[0]
 
-if lat == 0.0 and lon == 0.0:
-    st.info("📡 Waiting for location...")
+# Show result if available
+if lat and lon:
+    st.success(f"Latitude: {lat}")
+    st.success(f"Longitude: {lon}")
+else:
+    st.info("Tap the button to get your location.")
 
-st.metric("📍 Latitude", lat)
-st.metric("📍 Longitude", lon)
